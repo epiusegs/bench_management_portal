@@ -16,6 +16,7 @@ import {
 
 const navigation = [
     { name: "Dashboard", href: "/", icon: HomeIcon, current: true },
+    { name: "Employees", href: "/employee", icon: UsersIcon, current: false },
     { name: "Bench", href: "/bench", icon: UsersIcon, current: false },
     { name: "Business Units", href: "/business-unit", icon: BriefcaseIcon, current: false },
 ];
@@ -29,9 +30,9 @@ export default function Sidebar({ isDarkMode }) {
             {/* Header with Logo & Toggle Button */}
             <div className="flex items-center justify-between mb-6">
                 <img
-                    src="/EU_White_Square_Logo_RGB.svg" // Update this path to your actual logo file
+                    src="/EPI-USE_Logo_RGB.png" // Update this path to your actual logo file
                     alt="Logo"
-                    className={`h-20 ${isCollapsed ? "hidden" : "block"}`}
+                    className={`h-10 ${isCollapsed ? "hidden" : "block"}`}
                 />
                 <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-md hover:bg-[var(--midnight-blue)] hover:text-white">
                     <Bars3Icon className="h-6 w-6" />

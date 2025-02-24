@@ -4,62 +4,53 @@ import { useState } from "react";
 import EmployeeCard from "@/components/EmployeeCard";
 import {useSelector} from "react-redux";
 
-const businessUnits = [
-    { id: 1, name: "Software Development" },
-    { id: 2, name: "Data Science" },
-    { id: 3, name: "Web Development" },
-];
-
 const ITEMS_PER_PAGE = 3;
 
-export default function BusinessUnits() {
+export default function Bench() {
     const employees = useSelector((state) => state.employees.employees);
-    const [selectedUnit, setSelectedUnit] = useState("");
+
+    const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
 
-    const filteredConsultants = employees.filter((c) =>
-        selectedUnit === "" || c.businessUnit === selectedUnit
+    const filteredEmployees = employees.filter((c) =>
+        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
-    const totalConsultants = filteredConsultants.length;
-    const totalPages = Math.ceil(totalConsultants / ITEMS_PER_PAGE);
-    const paginatedConsultants = filteredConsultants.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+    const totalEmployees = filteredEmployees.length;
+    const totalPages = Math.ceil(totalEmployees / ITEMS_PER_PAGE);
+    const paginatedEmployees = filteredEmployees.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
     return (
         <div>
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Business Units</h1>
+                <h1 className="text-2xl font-bold">Employees</h1>
                 <p className="text-gray-600 bg-gray-200 px-3 py-1 rounded-lg">
-                    Total Consultants: <strong>{totalConsultants}</strong>
+                    Total Employees: <strong>{totalEmployees}</strong>
                 </p>
             </div>
 
-            {/* Filter by Business Unit */}
+            {/* Search Input */}
             <div className="mb-6">
-                <select
+                <input
+                    type="text"
+                    placeholder="Search by name, skills..."
                     className="p-2 border rounded w-full md:w-1/3"
                     onChange={(e) => {
-                        setSelectedUnit(e.target.value);
+                        setSearchQuery(e.target.value);
                         setCurrentPage(1);
                     }}
-                >
-                    <option value="">All Business Units</option>
-                    {businessUnits.map((unit) => (
-                        <option key={unit.id} value={unit.name}>
-                            {unit.name}
-                        </option>
-                    ))}
-                </select>
+                />
             </div>
 
-            {/* Display Consultants */}
+            {/* Display Employees */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {paginatedConsultants.length > 0 ? (
-                    paginatedConsultants.map((employee) => (
+                {paginatedEmployees.length > 0 ? (
+                    paginatedEmployees.map((employee) => (
                         <EmployeeCard key={employee.id} employee={employee} />
                     ))
                 ) : (
-                    <p className="text-gray-500">No employees found for this business unit.</p>
+                    <p className="text-gray-500">No employees match your search.</p>
                 )}
             </div>
 
