@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import EmployeeCard from "@/components/EmployeeCard";
+import EmployeeCard from "@/components/Cards/EmployeeCard";
 
 const employees = [
     { id: 1, name: "Alice Johnson", skills: ["React", "Node.js"], experience: "5 years", availability: "Available" },

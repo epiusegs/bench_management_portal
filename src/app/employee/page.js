@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import EmployeeCard from "@/components/EmployeeCard";
+import EmployeeCard from "@/components/Cards/EmployeeCard";
 import {useSelector} from "react-redux";
 
 const ITEMS_PER_PAGE = 3;

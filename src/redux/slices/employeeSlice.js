@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+/*import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     employees: [
@@ -13,6 +13,15 @@ const initialState = {
         { id: "9", name: "Isaac Newton", profilePic: "https://images.unsplash.com/photo-1604176354204-1d1b7e48f5ef?fm=jpg&q=60&w=3000", skills: ["AI/ML", "Deep Learning"], experience: "10 years", businessUnit: "Artificial Intelligence", availability: "Booked", email: "isaac@example.com", phone: "+1 (555) 901-2345", location: "Palo Alto, USA", linkedin: "https://linkedin.com/in/isaacnewton" },
         { id: "10", name: "Jessica Doe", profilePic: "https://images.unsplash.com/photo-1511367461989-f85a21fda167?fm=jpg&q=60&w=3000", skills: ["UX/UI Design", "Figma"], experience: "4 years", businessUnit: "Design", availability: "Available", email: "jessica@example.com", phone: "+1 (555) 012-3456", location: "Denver, USA", linkedin: "https://linkedin.com/in/jessicadoe" }
     ],
+    businessUnits: [
+        { id: "1", name: "Technology & Engineering", description: "Software development, cloud engineering, DevOps, cybersecurity, AI, and emerging technologies.", total_employees: 0 },
+        { id: "2", name: "Consulting & Implementation", description: "SAP consulting, HR & payroll solutions, ERP, CRM, and business process optimization.", total_employees: 0 },
+        { id: "3", name: "Data & Analytics", description: "Data science, business intelligence, big data, and predictive analytics.", total_employees: 0 },
+        { id: "4", name: "Support & Managed Services", description: "Technical support, IT helpdesk, cloud hosting, SAP application support, and IT compliance.", total_employees: 0 },
+        { id: "5", name: "Project & Change Management", description: "Program & project management, Agile & Scrum coaching, and change management.", total_employees: 0 },
+        { id: "6", name: "Legal, Finance & HR", description: "Finance, accounting, human resources, legal, compliance, procurement, and vendor management.", total_employees: 0 },
+        { id: "7", name: "Sales & Marketing", description: "Business development, digital marketing, client success management, and partnerships.", total_employees: 0 }
+    ]
 };
 
 const employeeSlice = createSlice({
@@ -32,6 +41,56 @@ const employeeSlice = createSlice({
             state.employees = state.employees.filter(emp => emp.id !== action.payload);
         },
     },
+});
+
+export const { addEmployee, updateEmployee, removeEmployee } = employeeSlice.actions;
+export default employeeSlice.reducer;*/
+
+import { createSlice } from "@reduxjs/toolkit";
+
+const initialState = {
+    employees: [
+        { id: "1", name: "Alice Johnson", businessUnitId: "1", profilePic: "https://images.unsplash.com/photo-1633332755192-727a05c4013d", skills: ["React", "Node.js"], experience: "5 years", availability: "Available", email: "alice@example.com", phone: "+1 (555) 123-4567", location: "New York, USA", linkedin: "https://linkedin.com/in/alicejohnson" },
+        { id: "2", name: "Bob Smith", businessUnitId: "3", profilePic: "https://images.unsplash.com/photo-1633332755192-727a05c4013d", skills: ["Python", "Django"], experience: "3 years", availability: "Booked", email: "bob@example.com", phone: "+1 (555) 234-5678", location: "San Francisco, USA", linkedin: "https://linkedin.com/in/bobsmith" },
+        { id: "3", name: "Charlie Brown", businessUnitId: "2", profilePic: "https://images.unsplash.com/photo-1511367461989-f85a21fda167", skills: ["Vue.js", "Laravel"], experience: "4 years", availability: "Available", email: "charlie@example.com", phone: "+1 (555) 345-6789", location: "Los Angeles, USA", linkedin: "https://linkedin.com/in/charliebrown" }
+    ],
+    businessUnits: [
+        { id: "1", name: "Technology & Engineering", description: "Software development, cloud engineering, DevOps, cybersecurity, AI, and emerging technologies.", total_employees: 0 },
+        { id: "2", name: "Consulting & Implementation", description: "SAP consulting, HR & payroll solutions, ERP, CRM, and business process optimization.", total_employees: 0 },
+        { id: "3", name: "Data & Analytics", description: "Data science, business intelligence, big data, and predictive analytics.", total_employees: 0 },
+        { id: "4", name: "Support & Managed Services", description: "Technical support, IT helpdesk, cloud hosting, SAP application support, and IT compliance.", total_employees: 0 },
+        { id: "5", name: "Project & Change Management", description: "Program & project management, Agile & Scrum coaching, and change management.", total_employees: 0 },
+        { id: "6", name: "Legal, Finance & HR", description: "Finance, accounting, human resources, legal, compliance, procurement, and vendor management.", total_employees: 0 },
+        { id: "7", name: "Sales & Marketing", description: "Business development, digital marketing, client success management, and partnerships.", total_employees: 0 }
+    ]
+};
+
+const updateBusinessUnitEmployeeCounts = (state) => {
+    state.businessUnits.forEach((unit) => {
+        unit.total_employees = state.employees.filter(emp => emp.businessUnitId === unit.id).length;
+    });
+};
+
+const employeeSlice = createSlice({
+    name: "employees",
+    initialState,
+    reducers: {
+        addEmployee: (state, action) => {
+            state.employees.push(action.payload);
+            updateBusinessUnitEmployeeCounts(state);
+        },
+        updateEmployee: (state, action) => {
+            const index = state.employees.findIndex(emp => emp.id === action.payload.id);
+            if (index !== -1) {
+                state.employees[index] = action.payload;
+                updateBusinessUnitEmployeeCounts(state);
+            }
+        },
+        removeEmployee: (state, action) => {
+            state.employees = state.employees.filter(emp => emp.id !== action.payload);
+            updateBusinessUnitEmployeeCounts(state);
+        }
+    }
 });
 
 export const { addEmployee, updateEmployee, removeEmployee } = employeeSlice.actions;

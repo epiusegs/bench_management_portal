@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import EmployeeCard from "../../components/EmployeeCard";
+import EmployeeCard from "../../components/Cards/EmployeeCard";
 
 const ITEMS_PER_PAGE = 3;
 
