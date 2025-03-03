@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { BellIcon, MagnifyingGlassIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 
 export default function Navbar({ isDarkMode, toggleDarkMode }) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const { logout } = useAuth();
+
 
     return (
         <header className={`${isDarkMode ? "bg-gray-800 text-white" : "bg-white"} shadow p-4 flex justify-between items-center`}>
@@ -44,7 +47,12 @@ export default function Navbar({ isDarkMode, toggleDarkMode }) {
                         <div className={`absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md p-2 ${isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
                             <button className="w-full text-left p-2 hover:bg-gray-100">Profile</button>
                             <button className="w-full text-left p-2 hover:bg-gray-100">Settings</button>
-                            <button className="w-full text-left p-2 hover:bg-red-500 hover:text-white">Logout</button>
+                            <button
+                                onClick={logout}
+                                className="w-full text-left p-2 hover:bg-red-500 hover:text-white"
+                            >
+                                Logout
+                            </button>
                         </div>
                     )}
                 </div>

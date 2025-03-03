@@ -1,23 +1,32 @@
 {
-  "name": "bench-management-app",
+  "name": "epi-use-profiler",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "next dev --turbopack",
+    "dev:backend": "node backend/server.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.758.0",
+    "@aws-amplify/auth": "^6.11.2",
     "@heroicons/react": "^2.2.0",
     "@reduxjs/toolkit": "^2.5.1",
+    "aws-amplify": "^6.13.2",
     "next": "15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-redux": "^9.2.0"
+    "react-redux": "^9.2.0",
+    "dotenv": "^16.4.7",
+    "express": "4.21.2",
+    "node": "^23.9.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "concurrently": "^9.1.2",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
     "postcss": "^8",

@@ -130,7 +130,7 @@ export default function Profile() {
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
-import { updateEmployee } from "../../../redux/slices/employeeSlice";
+import { updateEmployee } from "@/redux/slices/employeeSlice";
 import { notFound } from "next/navigation";
 import { BriefcaseIcon, AcademicCapIcon, CheckCircleIcon, XCircleIcon, EnvelopeIcon, LinkIcon, PhoneIcon, MapPinIcon } from "@heroicons/react/24/outline";
 
