@@ -1,9 +1,6 @@
 "use client";
+import AuthLayout from "@/components/AuthLayout";
 
-export default function AuthLayout({ children }) {
-    return (
-        <div className="flex items-center justify-center h-screen bg-gray-100">
-        {children}
-        </div>
-    );
+export default function AuthPageLayout({ children }) {
+    return <AuthLayout>{children}</AuthLayout>;
 }

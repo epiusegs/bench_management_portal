@@ -1,20 +1,60 @@
 "use client";
 
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import EmployeeCard from "../../components/Cards/EmployeeCard";
+import { useEffect, useState } from "react";
+import { fetchEmployees } from "@/api/editEmployee";
+import EmployeeCard from "../../../../components/Cards/EmployeeCard";
+import {fetchBusinessUnits} from "@/api/businessUnit";
 
 const ITEMS_PER_PAGE = 3;
 
+// Helper function to calculate availability
+function getAvailability(startDate, endDate) {
+    if (!startDate || !endDate) return "Available";
+    const now = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (now >= start && now <= end) {
+        return "Booked";
+    }
+    return "Available";
+}
+
 export default function Bench() {
-    const employees = useSelector((state) => state.employees.employees);
+    const [employees, setEmployees] = useState([]);
+    const [businessUnits, setBusinessUnits] = useState([]);
+    const [status, setStatus] = useState("idle");
+    const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
 
-    const filteredConsultants = employees.filter((c) =>
-            c.availability === "Available" && (
+    // Fetch employees when component loads
+    useEffect(() => {
+        if (status === "idle") {
+            setStatus("loading");
+            fetchEmployees()
+                .then((data) => {
+                    setEmployees(data);
+                    setStatus("succeeded");
+                })
+                .catch((err) => {
+                    setError(err.message || "Failed to fetch employees");
+                    setStatus("failed");
+                });
+            fetchBusinessUnits()
+                .then(setBusinessUnits)
+                .catch((err) => {
+                    console.error("Failed to fetch business units:", err);
+                });
+        }
+    }, [status]);
+
+    // Filter: Only "Available" employees matching the search
+    const filteredConsultants = employees.filter(
+        (c) =>
+            getAvailability(c.start_date, c.end_date) === "Available" &&
+            (
                 c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                c.skills.some((skill) => skill.toLowerCase().includes(searchQuery.toLowerCase()))
+                (Array.isArray(c.skills) && c.skills.some((skill) => skill.toLowerCase().includes(searchQuery.toLowerCase())))
             )
     );
 
@@ -31,6 +71,10 @@ export default function Bench() {
                 </p>
             </div>
 
+            {/* Error & Loading */}
+            {status === "loading" && <p className="text-blue-500">Loading consultants...</p>}
+            {status === "failed" && <p className="text-red-500">Error: {error}</p>}
+
             {/* Search Input */}
             <div className="mb-6">
                 <input
@@ -46,12 +90,12 @@ export default function Bench() {
 
             {/* Display Consultants */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {paginatedConsultants.length > 0 ? (
+                {status === "succeeded" && paginatedConsultants.length > 0 ? (
                     paginatedConsultants.map((employee) => (
-                        <EmployeeCard key={employee.id} employee={employee} />
+                        <EmployeeCard key={employee.id} employee={employee} businessUnit={businessUnits.find(unit => employee.businessUnitId === unit.id)}/>
                     ))
                 ) : (
-                    <p className="text-gray-500">No employees match your search.</p>
+                    status === "succeeded" && <p className="text-gray-500">No employees match your search.</p>
                 )}
             </div>
 

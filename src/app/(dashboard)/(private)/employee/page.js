@@ -1,22 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { fetchEmployees } from "@/api/editEmployee";
+import { fetchBusinessUnits } from "@/api/businessUnit";
 import EmployeeCard from "@/components/Cards/EmployeeCard";
-import {useSelector} from "react-redux";
 
 const ITEMS_PER_PAGE = 3;
 
-export default function Bench() {
-    const employees = useSelector((state) => state.employees.employees);
-
+export default function EmployeesPage() {
+    const [employees, setEmployees] = useState([]);
+    const [businessUnits, setBusinessUnits] = useState([]);
+    const [status, setStatus] = useState("idle");
+    const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
 
+    useEffect(() => {
+        if (status === "idle") {
+            setStatus("loading");
+            fetchEmployees()
+                .then((data) => {
+                    setEmployees(data);
+                    setStatus("succeeded");
+                })
+                .catch((err) => {
+                    setError(err.message || "Failed to fetch employees");
+                    setStatus("failed");
+                });
+            fetchBusinessUnits()
+                .then(setBusinessUnits)
+                .catch((err) => {
+                    console.error("Failed to fetch business units:", err);
+                });
+        }
+    }, [status]);
+
+    // Filter employees based on search input
     const filteredEmployees = employees.filter((c) =>
         c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))
+        (Array.isArray(c.skills) && c.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase())))
     );
 
+    // Pagination logic
     const totalEmployees = filteredEmployees.length;
     const totalPages = Math.ceil(totalEmployees / ITEMS_PER_PAGE);
     const paginatedEmployees = filteredEmployees.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
@@ -29,6 +54,10 @@ export default function Bench() {
                     Total Employees: <strong>{totalEmployees}</strong>
                 </p>
             </div>
+
+            {/* Loading & Error Handling */}
+            {status === "loading" && <p className="text-blue-500">Loading employees...</p>}
+            {status === "failed" && <p className="text-red-500">Error: {error}</p>}
 
             {/* Search Input */}
             <div className="mb-6">
@@ -45,12 +74,16 @@ export default function Bench() {
 
             {/* Display Employees */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {paginatedEmployees.length > 0 ? (
+                {status === "succeeded" && paginatedEmployees.length > 0 ? (
                     paginatedEmployees.map((employee) => (
-                        <EmployeeCard key={employee.id} employee={employee} />
+                        <EmployeeCard
+                            key={employee.id}
+                            employee={employee}
+                            businessUnit={businessUnits.find(unit => employee.businessUnitId === unit.id)}
+                        />
                     ))
                 ) : (
-                    <p className="text-gray-500">No employees match your search.</p>
+                    status === "succeeded" && <p className="text-gray-500">No employees match your search.</p>
                 )}
             </div>
 

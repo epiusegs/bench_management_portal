@@ -1,5 +1,3 @@
-"use client";
-
 import { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -7,6 +5,7 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true); // <-- add this
     const router = useRouter();
 
     useEffect(() => {
@@ -14,9 +13,8 @@ export function AuthProvider({ children }) {
             const storedUser = localStorage.getItem("demoUser");
             if (storedUser) {
                 setUser(JSON.parse(storedUser));
-            } else {
-                router.push("/auth/login");
             }
+            setLoading(false); // <-- only set loading false after check
         }
     }, []);
 
@@ -38,7 +36,7 @@ export function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );
